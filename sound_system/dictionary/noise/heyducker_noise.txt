@@ -1,0 +1,22 @@
+huy
+hoy
+hiy
+heiy
+hiey
+dacker
+duuker
+daaker
+dicker
+
+daaker	D AA K AH R
+dacker	D AE K AH R
+dicker	D IH K ER
+duuker	D Y UW AH K AH R
+heiy	HH EY IY
+hi HH AY
+hiey	HH AY IY
+hiy	HH AY IY
+hoy	HH OY
+huy	HH Y UW IY
+
+huy | hoy | hiy | heiy | hiey | dacker | duuker | daaker | dicker

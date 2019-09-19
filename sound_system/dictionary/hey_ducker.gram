@@ -1,0 +1,5 @@
+#JSGF V1.0;
+grammar hey_ducker;
+public <rule> = <command> | <noise>;
+<command> = hey ducker;
+<noise> = hi | k | su | tu | se | me | to | o | ro | sa | v | l | mu | z | ma | li;

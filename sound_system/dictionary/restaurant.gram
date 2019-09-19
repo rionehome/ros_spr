@@ -1,0 +1,6 @@
+#JSGF V1.0;
+grammar restaurant;
+public <rule> = <sentence> <food> | <noise>;
+<sentence> = I want;
+<food> = beans | biscuits | coca cola | cookies | grape juice | green tea | olive | onion soup | pringles;
+<noise> = la | ha | n | r | mu | wo | so | z | lo | ni | sa | to | x | ro | w | re | wa | li | ya | le | ki | ho | hu | f | no | ko | ke | ra | tu | wu | ma | o | ne | s | a | ka | ku | q | h | me | te | g | ti | j | k | mo | su | se | he | v | t | yo | lu | ta | na | l | p | hi | nu | ru;

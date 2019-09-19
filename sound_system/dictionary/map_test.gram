@@ -1,0 +1,7 @@
+#JSGF V1.0;
+grammar test_sphinx;
+public <rule> =  <here> <place> | <go> <place> | <noise>;
+<here> = Here is the;
+<go> = Please go to the;
+<place> = dining_room | living_room | entrance | car;
+<noise> = q | h | ma | li | me | s | mo | ki | te | sa | ka | ne | to | ru | a | lo | j | ku | ya | v | hi | p | le | so | wa | x | hu | g | ha | he | ke | na | ra | ta | ho | l | r | mu | su | w | wo | se | n | no | wu | f | nu | ko | ni | k | yo | ro | ti | o | z | la | re | lu | t | tu;
