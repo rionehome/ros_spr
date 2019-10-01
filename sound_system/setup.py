@@ -14,15 +14,24 @@ setup(
         ('lib/' + package_name, ['package.xml']),
         ('lib/' + package_name+'/module',
          ['module/module_QandA.py',
-          'module/module_speak.py',
+          'module/module_pico.py',
           'module/module_angular.py',
-          'module/module_detect.py'
+          'module/module_detect.py',
+          'module/module_beep.py',
+          'module/module_count.py'
           ]),
         ('lib/sound_system/dictionary/',
          ['dictionary/hey_ducker.dict',
           'dictionary/hey_ducker.gram',
-          'dictionary/spr_question.dict',
-          'dictionary/spr_question.gram'
+          'dictionary/new_spr_question.dict',
+          'dictionary/new_spr_question.gram',
+          'dictionary/yes_no.dict',
+          'dictionary/yes_no.gram',
+          ]),
+        ('lib/sound_system/beep/',
+         ['beep/speech.wav',
+          'beep/start.wav',
+          'beep/stop.wav'
           ]),
         ('lib/sound_system/dictionary/QandA',
             ['dictionary/QandA/qanda.csv']),

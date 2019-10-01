@@ -2,7 +2,8 @@ import os
 from pocketsphinx import LiveSpeech, get_model_path
 import csv
 
-from .import module_speak
+from . import module_pico
+from . import module_beep
 
 import datetime
 
@@ -15,9 +16,13 @@ file_path = os.path.abspath(__file__)
 
 # Define path
 spr_dic_path = file_path.replace(
-    'module/module_QandA.py', 'dictionary/spr_question.dict')
+    'module/module_QandA.py', 'dictionary/new_spr_question.dict')
 spr_gram_path = file_path.replace(
-    'module/module_QandA.py', 'dictionary/spr_question.gram')
+    'module/module_QandA.py', 'dictionary/new_spr_question.gram')
+yes_no_dic_path = file_path.replace(
+    'module/module_QandA.py', 'dictionary/yes_no.dict')
+yes_no_gram_path = file_path.replace(
+    'module/module_QandA.py', 'dictionary/yes_no.gram')
 model_path = get_model_path()
 csv_path = file_path.replace(
     'module/module_QandA.py', 'dictionary/QandA/qanda.csv')
@@ -36,8 +41,8 @@ def QandA(number):
     #
     # use this module at spr section >> | the number of person or Q&A
     #
-    # param >> number: | the number of people (wemen|men) 
-    #                  | how many times do you want to do Q&A 
+    # param >> number: | the number of people (wemen|men)
+    #                  | how many times do you want to do Q&A
     #
     # return >> 1
     #
@@ -52,51 +57,102 @@ def QandA(number):
 
     if "|" in str(number):
         number = number.split("|")
-        person_number = "There are {} people, the number of women is {}, the number of men is {}.".format((int(number[0]) + int(number[1])), number[0], number[1])            
+        person_number = "There are {} people, the number of women is {}, the number of men is {}.".format((int(number[0]) + int(number[1])), number[0], number[1])
         print(person_number)
-        module_speak.speak(person_number)
+        module_pico.speak(person_number)
+        module_beep.beep("stop")
 
-    # Listen question   
-    else:                
+    # Listen question
+    else:
         # Noise list
-        noise_words = read_noise_word()
-        
+        noise_words = read_noise_word(spr_gram_path)
+
         # If I have a question witch I can answer, count 1
         while counter < number:
+            print("- "+str(counter+1)+" cycle -")
             print("\n[*] LISTENING ...")
             # Setup live_speech
             setup_live_speech(False, spr_dic_path, spr_gram_path, 1e-10)
+            module_beep.beep("start")
             for question in live_speech:
                 #print(question)
                 if str(question) not in noise_words:
-                    cos = 0
                     max = 0
+                    correct_question = ""
                     for question_key in question_dictionary.keys():
                         cos = calc_cos(str(question),question_key)
                         if cos > max:
                             max = cos
+                            correct_question = question_key
                             #print(max)
+                    question = correct_question
                     if max > 0.8:
                         file = open(result_path, 'a')
                         file.write(str(datetime.datetime.now())+": "+str(question)+", "+str(question_dictionary[str(question)])+"\n")
                         file.close()
-                        print("\n-------your question--------\n",str(question),"\n----------------------------\n")
-                        print("\n-----------answer-----------\n",question_dictionary[str(question)],"\n----------------------------\n")
+                        if str(question) == "i want you to answer with turning":
+                            pause()
+                            module_beep.beep("stop")
+                            print("\n----------------------------\n", str(question), "\n----------------------------\n")
+                            module_pico.speak(question_dictionary[str(question)])
+
+                            # Detect yes or no
+                            setup_live_speech(False, yes_no_dic_path, yes_no_gram_path, 1e-20)
+                            module_beep.beep("start")
+                            for yes_no in live_speech:
+                                print("\n[*] CONFIRMING ...")
+                                # Noise list
+                                noise_words = read_noise_word(yes_no_gram_path)
+
+                                if str(yes_no) not in noise_words:
+                                    file = open(result_path, 'a')
+                                    file.write(str(datetime.datetime.now()) + ": " + str(yes_no) + "\n")
+                                    file.close()
+                                    if str(yes_no) == "yes":
+
+                                        # Deside order
+                                        pause()
+                                        module_beep.beep("stop")
+                                        answer = "Sure."
+                                        print("\n---------------------------------\n", answer,
+                                              "\n---------------------------------\n")
+                                        module_pico.speak(answer)
+                                        counter += 6
+                                        break
+
+                                    elif str(yes_no) == "no":
+
+                                        # Fail, Ask yes-no question
+                                        pause()
+                                        module_beep.beep("stop")
+                                        answer = "Sorry, what is your question?"
+                                        print("\n---------------------------------\n", answer,
+                                              "\n---------------------------------\n")
+                                        module_pico.speak(answer)
+                                        noise_words = read_noise_word(spr_gram_path)
+                                        break
+                            break
+
+                        else:
+                            pause()
+                            module_beep.beep("stop")
+                            print("\n-------your question--------\n",str(question),"\n----------------------------\n")
+                            print("\n-----------answer-----------\n",question_dictionary[str(question)],"\n----------------------------\n")
+                            module_pico.speak(question_dictionary[str(question)])
+                            counter += 1
+                            break
+                    elif 0 < max <= 0.8:
                         pause()
-                        module_speak.speak(question_dictionary[str(question)])
-                        counter += 1
-                        break
-                    else:
+                        module_beep.beep("stop")
                         answer = "Sorry, I don't have answer."
                         file = open(result_path, 'a')
                         file.write(str(datetime.datetime.now()) + ": " + answer + "\n")
                         file.close()
                         print("\n-----------answer-----------\n",answer,"\n----------------------------\n")
-                        pause()
-                        module_speak.speak(answer)
+                        module_pico.speak(answer)
                         counter += 1
                         break
-                        
+
                 # noise
                 else:
                     print(".*._noise_.*.")
@@ -113,7 +169,7 @@ def pause():
     #
     # param >> None
     #
-    # return >> None 
+    # return >> None
     #
     ###############
 
@@ -121,7 +177,7 @@ def pause():
     live_speech = LiveSpeech(no_search=True)
 
 
-def read_noise_word():
+def read_noise_word(gram):
 
     ###############
     #
@@ -134,7 +190,7 @@ def read_noise_word():
     ###############
 
     words = []
-    with open(spr_gram_path) as f:
+    with open(gram) as f:
         for line in f.readlines():
             if "<noise>" not in line:
                 continue
@@ -200,4 +256,4 @@ def calc_cos(A,B):
     return cos
 
 if __name__ == '__main__':
-    QandA(1)
+    QandA(5)

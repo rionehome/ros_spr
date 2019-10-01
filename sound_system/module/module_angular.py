@@ -8,6 +8,8 @@ import math
 import datetime
 from pocketsphinx import LiveSpeech, get_model_path
 
+from . import module_beep
+
 counter = 0
 question_dictionary = {}
 noise_words = []
@@ -65,6 +67,7 @@ def angular():
 
     while True:
         if read('SPEECHDETECTED') == 1:
+            module_beep.beep("start")
             for phrase in live_speech:
                 #print(phrase)
                 angular = direction()
@@ -80,17 +83,19 @@ def angular():
                         file = open(result_path, 'a')
                         file.write(str(datetime.datetime.now())+": "+str(phrase)+", "+str(question_dictionary[str(phrase)])+"\n")
                         file.close()
+                        module_beep.beep("stop")
                         print("\n-------your question--------\n",str(phrase),"\n----------------------------\n")
                         print("\n-----------answer-----------\n",question_dictionary[str(phrase)],"\n----------------------------\n")
                         counter += 1
                         print(str(counter) + ':' + str(angular) + "," + question_dictionary[str(phrase)], flush=True)
                         return_list = [angular, question_dictionary[str(phrase)]]
                         return return_list
-                    else:
+                    elif 0 < max <= 0.8:
                         answer = "Sorry, I don't have answer."
                         file = open(result_path, 'a')
                         file.write(str(datetime.datetime.now()) + ": " + answer + "\n")
                         file.close()
+                        module_beep.beep("stop")
                         print("\n-----------answer-----------\n",answer,"\n----------------------------\n")
                         counter += 1
                         print(str(counter) + ':' + str(angular) + "," + str(answer), flush=True)

@@ -4,8 +4,9 @@ from rclpy.qos import qos_profile_sensor_data
 
 from module import module_angular
 from module import module_QandA
-from module import module_speak
+from module import module_pico
 from module import module_detect
+from module import module_count
 
 from std_msgs.msg import String
 from time import sleep
@@ -18,8 +19,7 @@ class SoundSystem(Node):
 
         self.create_subscription(
             String, 'sound_system/command',
-            self.command_callback,
-            qos_profile_sensor_data
+            self.command_callback
         )
 
     # recieve a command {Command, Content}
@@ -30,7 +30,7 @@ class SoundSystem(Node):
 
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
-            if module_speak.speak(command[1].replace('Content:', '')) == 1:
+            if module_pico.speak(command[1].replace('Content:', '')) == 1:
                 self.cerebrum_publisher('Return:1,Content:None')
 
         # Detect hotword, "hey ducker"
@@ -38,6 +38,11 @@ class SoundSystem(Node):
             print('detect',flush=True)
             if module_detect.detect() == 1:
                 self.cerebrum_publisher('Return:1,Content:None')
+
+        # Start 10 counts
+        if 'count' == command[0].replace('Command:', ''):
+            if module_count.count() == 1:
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Sound localization
         if 'angular' == command[0].replace('Command:', ''):
@@ -63,8 +68,7 @@ class SoundSystem(Node):
     # Publish a result of an action
     def cerebrum_publisher(self, message):
         self.senses_publisher = self.create_publisher(
-            String, 'cerebrum/command',
-            qos_profile_sensor_data
+            String, 'cerebrum/command'
         )
 
         sleep(2)

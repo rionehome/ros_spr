@@ -2,7 +2,8 @@ import os
 
 from pocketsphinx import LiveSpeech, get_model_path
 
-from . import module_speak
+from . import module_pico
+from . import module_beep
 
 file_path = os.path.abspath(__file__)
 model_path = get_model_path()
@@ -31,11 +32,14 @@ def detect():
     global live_speech
 
     # If detect hotword, delete live_speech
+    module_beep.beep("start")
     for phrase in live_speech:
         #print(phrase)
         if 'hey ducker' == str(phrase):
+            pause()
+            module_beep.beep("stop")
             print(phrase)
-            module_speak.speak('yes sir !')
+            module_pico.speak('yes sir !')
             live_speech.stop = True
             del(live_speech)
             break
@@ -64,6 +68,21 @@ def setup_live_speech(lm, dict_path, jsgf_path, kws_threshold):
                              jsgf=jsgf_path,
                              kws_threshold=kws_threshold)
 
+# Stop lecognition
+def pause():
+
+    ###############
+    #
+    # use this module to stop live speech
+    #
+    # param >> None
+    #
+    # return >> None
+    #
+    ###############
+
+    global live_speech
+    live_speech = LiveSpeech(no_search=True)
 
 if __name__ == '__main__':
     detect()
