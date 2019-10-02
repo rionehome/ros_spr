@@ -13,7 +13,7 @@ def count():
     #
     ###############
 
-    sentence = "I will start 10 counts"
+    sentence = "I will start riddle game"
     print(sentence)
     module_pico.speak(sentence)
     time_start = time.perf_counter()
