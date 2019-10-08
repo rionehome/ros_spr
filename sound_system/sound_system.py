@@ -26,7 +26,6 @@ class SoundSystem(Node):
             String, 'cerebrum/command'
         )
 
-        sleep(1)
 
     # recieve a command {Command, Content}
     def command_callback(self, msg):
