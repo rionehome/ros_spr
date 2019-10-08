@@ -19,11 +19,14 @@ class SoundSystem(Node):
 
         self.create_subscription(
             String, 'sound_system/command',
-            self.command_callback
+            self.command_callback,
+            10
         )
 
         self.senses_publisher = self.create_publisher(
-            String, 'cerebrum/command'
+            String,
+            'cerebrum/command',
+            10
         )
 
 
