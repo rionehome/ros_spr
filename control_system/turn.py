@@ -22,13 +22,15 @@ class Turn(Node):
         self.create_subscription(
                 Odometry,
                 "/turtlebot2/odometry",
-                self.Send
+                self.Send,
+                10
         )
 
         self.create_subscription(
                 String,
                 "/control_system/command",
-                self.Flag
+                self.Flag,
+                10
         )
 
         self.cic_pub = self.create_publisher(
