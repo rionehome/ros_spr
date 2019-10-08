@@ -22,6 +22,12 @@ class SoundSystem(Node):
             self.command_callback
         )
 
+        self.senses_publisher = self.create_publisher(
+            String, 'cerebrum/command'
+        )
+
+        sleep(1)
+
     # recieve a command {Command, Content}
     def command_callback(self, msg):
 
@@ -67,12 +73,6 @@ class SoundSystem(Node):
 
     # Publish a result of an action
     def cerebrum_publisher(self, message):
-        self.senses_publisher = self.create_publisher(
-            String, 'cerebrum/command'
-        )
-
-        sleep(2)
-
         _trans_message = String()
         _trans_message.data = message
 
