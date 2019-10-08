@@ -25,6 +25,8 @@ class CIC(Node):
         self.executing = "1"
         self.did = "0"
 
+        print("[*] START SPR", flush=True)
+
     def state(self):
         for number, task in self.tasks.items():
             self.executing = number
