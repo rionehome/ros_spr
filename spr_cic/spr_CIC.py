@@ -19,7 +19,9 @@ class CIC(Node):
 
         self.tasks = {
                 "1": ["sound", "count"],
-                "2": ["control", "turn"]
+                "2": ["control", "turn"],
+                "3": ["image", "capture"],
+                "4": ["sound", "QandA"],
         }
 
         self.executing = "1"
