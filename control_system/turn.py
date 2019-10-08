@@ -31,9 +31,10 @@ class Turn(Node):
                 self.Flag
         )
 
-        self.cic_pub = self.create_pusbliher(
+        self.cic_pub = self.create_publisher(
                 String,
-                "/cerebrum/command", 10
+                "/cerebrum/command",
+                10
         )
 
         self.data = Twist()
