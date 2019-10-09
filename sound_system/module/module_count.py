@@ -14,7 +14,6 @@ def count():
     ###############
 
     sentence = "I will start riddle game"
-    print(sentence)
     module_pico.speak(sentence)
     time_start = time.perf_counter()
     for i in range(1,11):
