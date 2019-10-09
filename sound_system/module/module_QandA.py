@@ -58,9 +58,13 @@ def QandA(number):
     if "|" in str(number):
         number = number.split("|")
         person_number = "There are {} people, the number of women is {}, the number of men is {}.".format((int(number[0]) + int(number[1])), number[0], number[1])
+        module_beep.beep("stop")
         print(person_number)
         module_pico.speak(person_number)
-        module_beep.beep("stop")
+        file = open(result_path, 'a')
+        file.write(str(datetime.datetime.now()) + ": " + str(person_number) + "\n")
+        file.close()
+
 
     # Listen question
     else:
