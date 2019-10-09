@@ -39,6 +39,8 @@ class Turn(Node):
                 10
         )
 
+        sleep(1)
+
         self.data = Twist()
         self.data.angular.z = 30.0
 
@@ -46,8 +48,7 @@ class Turn(Node):
         self.cic_data.data = "Return:0"
 
         self.flag = False
-
-        sleep(1)
+        self.did = False
 
 
     def Send(self, msg):
@@ -57,24 +58,26 @@ class Turn(Node):
         angle = 0
 
         if z > 0:
-            angle = abs(1 - arccos(w)* 360 / pi)
+            angle = abs(1 - arccos(w)*360 / pi)
         else:
-            angle = abs(360 - arccos(w)* 360 / pi)
+            angle = abs(360 - arccos(w)*360 / pi)
 
         if 350 > angle and angle > 180:
             self.data.angular.z = 0.0
-            if self.flag:
-                self.turn.publish(self.data)
+            if self.did == False:
+                print("[*] STOP TURN 180 DEGREE", flush=True)
+                self.cic_pub.publish(self.cic_data)
+                self.did = True
 
-            self.flag = False
-            
+        if self.flag:
+            self.turn.publish(self.data)
 
     def Flag(self, msg):
         data = msg.data.split(":")[1]
 
         if data == "turn" and self.flag == False:
             self.flag = True
-            print("START TURNING", flush=True)
+            print("[*] START TURN 180 DEGREE", flush=True)
 
 def main():
     rclpy.init()
