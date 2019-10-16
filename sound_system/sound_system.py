@@ -52,7 +52,7 @@ class SoundSystem(Node):
         # Start 10 counts
         if 'count' == command[0].replace('Command:', ''):
             if module_count.count() == 1:
-                self.cerebrum_publisher('Return:0,Content:None')
+                self.cerebrum_publisher('Return:1,Content:None')
 
         # Sound localization
         if 'angular' == command[0].replace('Command:', ''):
@@ -74,7 +74,7 @@ class SoundSystem(Node):
             content = command[1].replace('Content:', '')
             if "|" in str(content):
                 if module_QandA.QandA(content) == 1:
-                    self.cerebrum_publisher('Retern:0,Content:None')
+                    self.cerebrum_publisher('Retern:1,Content:None')
             else:
                 content = int(content)
                 if module_QandA.QandA(content) == 1:
