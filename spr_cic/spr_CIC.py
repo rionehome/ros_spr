@@ -17,12 +17,17 @@ class CIC(Node):
 
         sleep(1)
 
+        #self.tasks = {
+        #        "1": ["sound", "count"],
+        #        "2": ["control", "turn"],
+        #        "3": ["image", "capture"],
+        #        "4": ["sound", "QandA"],
+        #}
+
         self.tasks = {
-                "1": ["sound", "count"],
-                "2": ["control", "turn"],
-                "3": ["image", "capture"],
-                "4": ["sound", "QandA"],
+                "1": ["control", "find,Content:30"]       
         }
+
 
         self.executing = "1"
         self.did = "0"
@@ -51,6 +56,8 @@ class CIC(Node):
         )
 
         sleep(1)
+
+        print("send to /{0}_system/command Command:{1}".format(topic, Command), flush=True)
 
         self.data.data = "Command:" + Command
         self.sound_system_pub.publish(self.data)

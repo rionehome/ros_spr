@@ -9,6 +9,7 @@ setup(
     py_modules=[
         'control_system',
         'turn',
+        "find_speaker",
     ],
     install_requires=['setuptools'],
     data_files=[
@@ -33,6 +34,7 @@ setup(
         'console_scripts': [
             'control_system = control_system:main',
             'turn = turn:main',
+            'find_speaker = find_speaker:main',
         ],
     },
 )
