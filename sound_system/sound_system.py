@@ -60,7 +60,7 @@ class SoundSystem(Node):
             if self.temp_angular > 0:
                 # "Return:1,Content:angular,saying words"
                 self.cerebrum_publisher(
-                    'Return:1,Content:'+str(self.temp_angular))
+                    'Command:find,Content:'+str(self.temp_angular))
 
         # Speak answer at answering with rurnning
         if 'finish' == command[0].replace('Command:', ''):
