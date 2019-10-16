@@ -19,11 +19,13 @@ class SoundSystem(Node):
 
         self.create_subscription(
             String, 'sound_system/command',
-            self.command_callback
+            self.command_callback,
+            10
         )
 
         self.senses_publisher = self.create_publisher(
-            String, 'cerebrum/command'
+            String, 'cerebrum/command',
+            10
         )
 
 
@@ -32,6 +34,8 @@ class SoundSystem(Node):
 
         self.command = msg.data
         command = msg.data.split(',')
+
+        self.return_list = []
 
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
@@ -56,7 +60,12 @@ class SoundSystem(Node):
             if self.temp_angular > 0:
                 # "Return:1,Content:angular,saying words"
                 self.cerebrum_publisher(
-                    'Return:1,Content:'+str(self.temp_angular)+","+str(self.return_list[1]))
+                    'Return:1,Content:'+str(self.temp_angular))
+
+        # Speak answer at answering with rurnning
+        if 'finish' == command[0].replace('Command:', ''):
+            if module_pico.speak(self.return_list[1]) == 1:
+                self.cerebrum_publisher('Return:1,Content:None')
 
         # Start QandA, an act of repeating 5 times, content is times (ex; 5 times >> 5)
         content = 0
