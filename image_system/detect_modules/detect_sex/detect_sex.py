@@ -3,69 +3,97 @@ import cv2
 
 from cv_bridge import CvBridge
 
-from face_recognition import face_locations
-
 from PIL import Image
 
-from matplotlib import pyplot as plt
-
-from detect_modules.detect_sex.classifier import detect_human_sex
-from detect_modules.detect_human.entity import params
+from detect_modules.detect_sex.model import Model
 
 import numpy as np
-from numpy import array, float32, asarray, uint8
+from numpy import array, float32, asarray, uint8, argmax
 
 import os
+
+import shutil
+
+from subprocess import check_output
+
+from matplotlib import pyplot as plt
 
 cascade_path = os.path.abspath(__file__).replace(
         'detect_modules/detect_sex/detect_sex.py', 'model/haarcascade_frontalface_default.xml'
         )
 
+model_path = os.path.abspath(__file__).replace(
+        'detect_modules/detect_sex/detect_sex.py', 'model/AlexlikeMSGD.model'
+        )
+
+sound_effect_path = os.path.abspath(__file__).replace(
+        'detect_modules/detect_sex/detect_sex.py', 'model/camera-shutter3.wav'
+        )
+
+log_path = os.path.abspath(__file__).replace(
+        'detect_modules/detect_sex/detect_sex.py', ''
+        )
+
+model = Model()
+
 print(cascade_path, flush=True)
 
-cascade = cv2.CascadeClassifier(cascade_path)
-
-
 def detect_sex(image_data):
-    facerects = face_locations(image_data, model="cnn")
-    print("Found human : {0}".format(len(facerects)), flush=True)
+    reset_dir(log_path + "log")
+    reset_dir(log_path + "male")
+    reset_dir(log_path + "female")
 
-    if len(facerects) > 0:
-        woman = 0
-        man = 0
-        for top, right, bottom, left in facerects:
-            facerect = (left, top, right - left, bottom - top)
-            cropped_face, face_left_top = crop_face(image_data, facerect)
-            cropped_face = array(cv2.resize(cropped_face, (96, 96)), dtype=float32)
+    check_output(["aplay", sound_effect_path])
 
-            sex = detect_human_sex(cropped_face)
+    gray_scale_image = cv2.cvtColor(image_data, cv2.COLOR_RGB2GRAY)
 
-            print("SEX : {0}".format(sex), flush=True)
+    while True:
+        cascade = cv2.CascadeClassifier(cascade_path)
+        face_rects = cascade.detectMultiScale(
+            gray_scale_image,
+            scaleFactor=1.2,
+            minNeighbors=2,
+            minSize=(2, 2)
+        )
 
-            if sex == 0:
-                woman += 1
-            elif sex == 1:
-                man += 1
-            else:
-                pass
-        return str(woman), str(man)
+        if not(len(face_rects) == 0):
+            break
 
-    else:
-        return "0", "0"
+    print("Found human : {0}".format(len(face_rects)), flush=True)
+
+    woman = 0
+    man = 0
+    for i in range(0, len(face_rects)):
+        
+        left, top, width, height = face_rects[i]
+
+        image = cv2.resize(image_data[top:top + height, left:left + width], (96, 96))
+
+        file_name = "{0}/{1}.jpg".format(log_path + "log", i)
+
+        #cv2.imwrite(file_name, image)
+
+        plt.imshow(np.asarray(image))
+        plt.savefig(file_name)
+
+        transposed_image = (np.asarray(image).transpose((2, 0, 1)).astype(np.float32) / 255.).reshape(1, 3, 96, 96)
+
+        model.load(model_path)
+
+        data = model.predictor(transposed_image).data
+
+        sex = argmax(array(data)[0])
+
+        if sex == 0:
+            woman += 1
+        else:
+            man += 1
 
 
-def crop_face(img, rect):
-    orig_img_h, orig_img_w, _ = img.shape
-    crop_center_x = rect[0] + rect[2] / 2
-    crop_center_y = rect[1] + rect[3] / 2
-    crop_width = rect[2] * params['face_crop_scale']
-    crop_height = rect[3] * params['face_crop_scale']
-    crop_left = max(0, int(crop_center_x - crop_width / 2))
-    crop_top = max(0, int(crop_center_y - crop_height / 2))
-    crop_right = min(orig_img_w, int(crop_center_x + crop_width / 2))
-    crop_bottom = min(orig_img_h, int(crop_center_y + crop_height / 2))
-    cropped_face = img[crop_top:crop_bottom, crop_left:crop_right]
-    max_edge_len = np.max(cropped_face.shape[:-1])
-    padded_face = np.zeros((max_edge_len, max_edge_len, cropped_face.shape[-1]), dtype=np.uint8)
-    padded_face[0:cropped_face.shape[0], 0:cropped_face.shape[1]] = cropped_face
-    return padded_face, (crop_left, crop_top)
+    print("FEMALE , MALE : {0} , {1}".format(woman, man), flush=True)
+    return str(woman), str(man)
+
+def reset_dir(dir_path):
+    if os.path.exists(dir_path):
+        shutil.rmtree(dir_path)
+    os.mkdir(dir_path)
