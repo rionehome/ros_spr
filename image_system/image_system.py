@@ -18,10 +18,16 @@ class ImageSystem(Node):
         super(ImageSystem, self).__init__('ImageSystem')
 
         self.senses_publisher = self.create_publisher(
-                                    String,
-                                    'cerebrum/command',
-                                    10
-                                    )
+                String,
+                'cerebrum/command',
+                10
+        )
+
+        self.answor_human_number = self.create_publisher(
+                String,
+                "sound_system/command",
+                10
+        )
 
         self.create_subscription(
                 String,
@@ -54,8 +60,18 @@ class ImageSystem(Node):
         command = msg.data.split(',')
 
         if 'capture' == command[0].replace('Command:', ''):
-            print("HUMAN : {0}".format(self.detect_human()), flush=True)
-            print("SEX : {0}".format(self.detect_sex()), flush=True)
+            human_number = self.detect_human()
+            print("HUMAN : {0}".format(human_number), flush=True)
+            sex = self.detect_sex()
+            print("SEX : WOMAN={0} , MAN={2}".format(sex[0], sex[1]), flush=True)
+            self._trans_message.data = \
+                    "Command:speak,Content:There are {0} people. Number of man is {1} and number of woman is {2}".format(
+                            human_number,
+                            sex[2],
+                            sex[0]
+            )
+            self.answor_human_number.publish(self._trans_message)
+            #self.cerebrum_publisher('Return:0,Content:')
 
             #self.cerebrum_publisher('Return:1,Content:'+self.message)
         if 'sex' == command[0].replace('Command:', ''):
