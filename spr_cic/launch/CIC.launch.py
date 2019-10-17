@@ -10,6 +10,11 @@ def generate_launch_description():
             output="screen"
         ),
         launch_ros.actions.Node(
+            package="ydlidar",
+            node_executable="ydlidar_node",
+            output="screen"
+        ),
+        launch_ros.actions.Node(
             package="sound_system",
             node_executable="sound_system",
             output="screen"
