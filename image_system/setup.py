@@ -21,16 +21,17 @@ setup(
           'detect_modules/detect_human/pose_detector.py',
           ]),
         ('lib/'+package_name+'/detect_modules/detect_sex',
-         ['detect_modules/detect_sex/classifier.py',
-          'detect_modules/detect_sex/detect_sex.py',
-          'detect_modules/detect_sex/model.py'
+            [
+            'detect_modules/detect_sex/detect_sex.py',
+            'detect_modules/detect_sex/model.py'
           ]),
         ("lib/" + package_name + "/model",
             [
-                "model/cifier_adam.npz",
+                "model/AlexlikeMSGD.model",
                 "model/coco_posenet.npz",
                 "model/haarcascade_frontalface_alt.xml",
-                "model/haarcascade_frontalface_default.xml"
+                "model/haarcascade_frontalface_default.xml",
+                "model/camera-shutter3.wav"
             ]
         )
     ],
