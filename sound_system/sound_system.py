@@ -41,7 +41,7 @@ class SoundSystem(Node):
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
             if module_pico.speak(command[1].replace('Content:', '')) == 1:
-                self.cerebrum_publisher('Return:1,Content:None')
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Detect hotword, "hey ducker"
         if 'detect' == command[0].replace('Command:', ''):
@@ -52,7 +52,7 @@ class SoundSystem(Node):
         # Start 10 counts
         if 'count' == command[0].replace('Command:', ''):
             if module_count.count() == 1:
-                self.cerebrum_publisher('Return:1,Content:None')
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Sound localization
         if 'angular' == command[0].replace('Command:', ''):
