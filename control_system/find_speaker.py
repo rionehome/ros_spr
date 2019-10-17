@@ -46,11 +46,10 @@ class FindSpeaker(Node):
         self.Y = ranges*sin(angles)
 
     def recieve_flag(self, msg):
-        Command, Content = msg.data.split(",")
+        Command = msg.data.split(",")
 
-        if Command.split(":")[1] == "find":
-            self.degree = int( Content.split(":")[1] )
-
+        if Command[0].split(":")[1] == "find":
+            self.degree = int( Content[1].split(":")[1] )
 
     def find(self):
 
