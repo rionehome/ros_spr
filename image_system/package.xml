@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>image_system</name>
-  <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="yamato19990708@gmail.com">matsudayamato</maintainer>
+  <version>0.0.1</version>
+  <description>human detection using PoseNet and OpenCV</description>
+  <maintainer email="l1sum@ito.local">l1sum</maintainer>
   <license>TODO: License declaration</license>
 
   <buildtool_depend>ament_python</buildtool_depend>

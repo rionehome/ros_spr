@@ -24,7 +24,8 @@ class SoundSystem(Node):
         )
 
         self.senses_publisher = self.create_publisher(
-            String, 'cerebrum/command',
+            String,
+            'cerebrum/command',
             10
         )
 
