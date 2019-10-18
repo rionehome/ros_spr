@@ -23,9 +23,9 @@ model_path = get_model_path()
 csv_path = file_path.replace(
     'module/module_angular.py', 'dictionary/QandA/qanda.csv')
 dict_path = file_path.replace('module/module_angular.py',
-                              '/dictionary/spr_question.dict')
+                              '/dictionary/new_spr_question.dict')
 gram_path = file_path.replace('module/module_angular.py',
-                              '/dictionary/spr_question.gram')
+                              '/dictionary/new_spr_question.gram')
 result_path = file_path.replace(
     'module/module_angular.py', 'log/angurarQandA-{}.txt').format(str(datetime.datetime.now()))
 # PARAMETERS for sound localization
@@ -87,7 +87,7 @@ def angular():
                         print("\n-------your question--------\n",str(phrase),"\n----------------------------\n")
                         print("\n-----------answer-----------\n",question_dictionary[str(phrase)],"\n----------------------------\n")
                         counter += 1
-                        print(str(counter) + ':' + str(angular) + "," + question_dictionary[str(phrase)], flush=True)
+                        print("cicle " + str(counter) + ': ' + str(angular) + ", " + question_dictionary[str(phrase)] + "\n", flush=True)
                         return_list = [angular, question_dictionary[str(phrase)]]
                         return return_list
                     elif 0 < max <= 0.8:
@@ -98,7 +98,7 @@ def angular():
                         module_beep.beep("stop")
                         print("\n-----------answer-----------\n",answer,"\n----------------------------\n")
                         counter += 1
-                        print(str(counter) + ':' + str(angular) + "," + str(answer), flush=True)
+                        print("cicle " + str(counter) + ': ' + str(angular) + ", " + str(answer) + "\n", flush=True)
                         return_list = [angular, answer]
                         return return_list
 

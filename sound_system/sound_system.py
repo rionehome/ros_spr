@@ -35,8 +35,6 @@ class SoundSystem(Node):
         self.command = msg.data
         command = msg.data.split(',')
 
-        self.return_list = []
-
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
             if module_pico.speak(command[1].replace('Content:', '')) == 1:
