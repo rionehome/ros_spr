@@ -38,18 +38,18 @@ class SoundSystem(Node):
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
             if module_pico.speak(command[1].replace('Content:', '')) == 1:
-                self.cerebrum_publisher('Return:1,Content:None')
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Detect hotword, "hey ducker"
         if 'detect' == command[0].replace('Command:', ''):
             print('detect',flush=True)
             if module_detect.detect() == 1:
-                self.cerebrum_publisher('Return:1,Content:None')
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Start 10 counts
         if 'count' == command[0].replace('Command:', ''):
             if module_count.count() == 1:
-                self.cerebrum_publisher('Return:1,Content:None')
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Sound localization
         if 'angular' == command[0].replace('Command:', ''):
@@ -63,7 +63,7 @@ class SoundSystem(Node):
         # Speak answer at answering with rurnning
         if 'finish' == command[0].replace('Command:', ''):
             if module_pico.speak(self.return_list[1]) == 1:
-                self.cerebrum_publisher('Return:1,Content:None')
+                self.cerebrum_publisher('Return:0,Content:None')
 
         # Start QandA, an act of repeating 5 times, content is times (ex; 5 times >> 5)
         content = 0
@@ -71,7 +71,7 @@ class SoundSystem(Node):
             content = command[1].replace('Content:', '')
             if "|" in str(content):
                 if module_QandA.QandA(content) == 1:
-                    self.cerebrum_publisher('Retern:1,Content:None')
+                    self.cerebrum_publisher('Retern:0,Content:None')
             else:
                 content = int(content)
                 if module_QandA.QandA(content) == 1:
