@@ -25,9 +25,11 @@ class SoundSystem(Node):
 
         self.senses_publisher = self.create_publisher(
             String,
-            'cerebrum/command',
+            '/cerebrum/command',
             10
         )
+
+        sleep(1)
 
 
     # recieve a command {Command, Content}
@@ -39,7 +41,8 @@ class SoundSystem(Node):
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
             if module_pico.speak(command[1].replace('Content:', '')) == 1:
-                self.cerebrum_publisher('Return:0,Content:None')
+                pass
+                #self.cerebrum_publisher('Return:0,Content:None')
 
         # Detect hotword, "hey ducker"
         if 'detect' == command[0].replace('Command:', ''):
