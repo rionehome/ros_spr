@@ -22,6 +22,7 @@ class CIC(Node):
                 "2": ["control", "turn",    None],
                 "3": ["image",   "capture", None],
                 "4": ["sound",   "QandA",   5   ],
+                "5": ["sound", "angular", None]
         }
 
         #self.tasks = {
@@ -47,6 +48,7 @@ class CIC(Node):
 
     def receive(self, msg):
         flag = int(msg.data.split(",")[0].split(":")[1])
+        print(msg.data, flush=True)
 
         if flag == 0:
             print( self.tasks.pop(self.executing) , flush=True)
