@@ -29,8 +29,12 @@ class SoundSystem(Node):
             10
         )
 
-        sleep(1)
+        self.angular_publisher = self.create_publisher(
+            String, 'control/command',
+            10
+        )
 
+        sleep(1)
 
     # recieve a command {Command, Content}
     def command_callback(self, msg):
@@ -61,7 +65,7 @@ class SoundSystem(Node):
             self.temp_angular = self.return_list[0]
             if self.temp_angular > 0:
                 # "Return:1,Content:angular,saying words"
-                self.cerebrum_publisher(
+                self.turnnig_publisher(
                     'Command:find,Content:'+str(self.temp_angular))
 
         # Speak answer at answering with rurnning
@@ -87,6 +91,14 @@ class SoundSystem(Node):
         _trans_message.data = message
 
         self.senses_publisher.publish(_trans_message)
+        # self.destroy_publisher(self.senses_publisher)
+
+    # Publish a result of an action
+    def turnnig_publisher(self, message):
+        _trans_message = String()
+        _trans_message.data = message
+
+        self.angular_publisher.publish(_trans_message)
         # self.destroy_publisher(self.senses_publisher)
 
 
