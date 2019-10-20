@@ -1,5 +1,4 @@
 from detect_modules.detect_human.detect_human import detect_human
-
 from detect_modules.detect_sex.detect_sex import detect_sex
 
 import rclpy
@@ -63,7 +62,7 @@ class ImageSystem(Node):
             human_number = self.detect_human()
             print("HUMAN : {0}".format(human_number), flush=True)
             sex = self.detect_sex()
-            print("SEX : WOMAN={0} , MAN={2}".format(sex[0], sex[1]), flush=True)
+            print("SEX : WOMAN={0} , MAN={1}".format(sex[0], sex[2]), flush=True)
             self._trans_message.data = \
                     "Command:speak,Content:There are {0} people. Number of man is {1} and number of woman is {2}".format(
                             human_number,
@@ -71,12 +70,12 @@ class ImageSystem(Node):
                             sex[0]
             )
             self.answor_human_number.publish(self._trans_message)
-            #self.cerebrum_publisher('Return:0,Content:')
+            self.cerebrum_publisher('Return:0,Content: ')
 
-            #self.cerebrum_publisher('Return:1,Content:'+self.message)
         if 'sex' == command[0].replace('Command:', ''):
             self.message = self.detect_sex()
             self.cerebrum_publisher('Return:1,Content:'+self.message)
+
         if 'object' == command[0].replace('Command:', ''):
             self.detect_object()
 
