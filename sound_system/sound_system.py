@@ -18,7 +18,8 @@ class SoundSystem(Node):
         self.command = None
 
         self.create_subscription(
-            String, 'sound_system/command',
+            String,
+            'sound_system/command',
             self.command_callback,
             10
         )
@@ -30,7 +31,8 @@ class SoundSystem(Node):
         )
 
         self.angular_publisher = self.create_publisher(
-            String, 'control/command',
+            String,
+            'control/command',
             10
         )
 
@@ -57,7 +59,7 @@ class SoundSystem(Node):
         # Start 10 counts
         if 'count' == command[0].replace('Command:', ''):
             if module_count.count() == 1:
-                self.cerebrum_publisher('Return:0,Content:None')
+                self.cerebrum_publisher('Return:count,Content:None')
 
         # Sound localization
         if 'angular' == command[0].replace('Command:', ''):
@@ -83,7 +85,7 @@ class SoundSystem(Node):
             else:
                 content = int(content)
                 if module_QandA.QandA(content) == 1:
-                    self.cerebrum_publisher('Retern:0,Content:None')
+                    self.cerebrum_publisher('Retern:QandA,Content:None')
 
     # Publish a result of an action
     def cerebrum_publisher(self, message):
