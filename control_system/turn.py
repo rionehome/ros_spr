@@ -1,7 +1,7 @@
 import rclpy
 from rclpy.node import Node
 
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 
@@ -14,70 +14,114 @@ class Turn(Node):
         super().__init__("Trun")
 
         self.turn = self.create_publisher(
-                Twist,
-                "/turtlebot2/commands/velocity",
-                10
+            Twist,
+            "/turtlebot2/commands/velocity",
+            10
         )
-        
-        self.create_subscription(
-                Odometry,
-                "/turtlebot2/odometry",
-                self.Send,
-                10
+
+        self.resetPose = self.create_publisher(
+            Bool,
+            "/turtlebot2/commands/reset",
+            10
         )
 
         self.create_subscription(
-                String,
-                "/control_system/command",
-                self.Flag,
-                10
+            Odometry,
+            "/turtlebot2/odometry",
+            self.sendVelocity,
+            10
         )
 
-        self.cic_pub = self.create_publisher(
-                String,
-                "/cerebrum/command",
-                10
+        self.create_subscription(
+            String,
+            "/control_system/command",
+            self.receiveFlag,
+            10
         )
 
         sleep(1)
 
-        self.data = Twist()
-        self.data.angular.z = 30.0
+        self.velocity = Twist()
+        self.velocity.angular.z = 30.0
 
-        self.cic_data = String()
-        self.cic_data.data = "Return:0"
-
-        self.flag = False
+        self.setVelocity = False
         self.did = False
 
+        self.degree = None
 
-    def Send(self, msg):
+    def sendVelocity(self, msg):
         w = msg.pose.pose.orientation.w
         z = msg.pose.pose.orientation.z
 
         angle = 0
 
         if z > 0:
-            angle = abs(1 - arccos(w)*360 / pi)
+            angle = abs(1 - arccos(w)*360 / pi) - 180
         else:
-            angle = abs(360 - arccos(w)*360 / pi)
+            angle = abs(360 - arccos(w)*360 / pi) - 180
 
-        if 350 > angle and angle > 180:
-            self.data.angular.z = 0.0
-            if self.did == False:
-                print("[*] STOP TURN 180 DEGREE", flush=True)
-                self.cic_pub.publish(self.cic_data)
-                self.did = True
+        try:
+            # if reach target angular
+            if angle > self.degree:
 
-        if self.flag:
-            self.turn.publish(self.data)
+                self.velocity.angular.z = 0.0
 
-    def Flag(self, msg):
-        data = msg.data.split(":")[1]
+                # if not send finish flag to sender
+                if self.did == False:
+                    print("[*] STOP TURN {0} DEGREE".format(self.degree), flush=True)
 
-        if data == "turn" and self.flag == False:
-            self.flag = True
-            print("[*] START TURN 180 DEGREE", flush=True)
+                    # send finish flag to sender
+                    if self.sender == "sound_system":
+                        self.sendFinishFlag("sound", "Command:finish,Content:None")
+
+                    if self.sender == "cerebrum":
+                        self.sendFinishFlag("cerebrum", "Command:{0},Content:None".format(self.Command))
+
+                    self.did = True
+                    self.setVelocity = False
+
+        except TypeError:
+            pass
+
+        if self.setVelocity == True:
+            if -180 <= self.degree and self.degree < 0:
+                self.velocity.angular.z = 30.0
+            else:
+                self.velocity.angular.z = -30.0
+
+        self.turn.publish(self.data)
+
+    def receiveFlag(self, msg):
+        self.Command, Contents = msg.data.split(",")
+
+        Contents = Contents.split(":")
+        self.degree = Contents[1]
+        self.sender = Contents[2]
+
+        self.Command = self.Command.split(":")[1]
+
+        if self.Command == "turn":
+            reset_flag = Bool()
+            reset_flag.data = True
+            self.resetPose.publish(reset_flag)
+
+            self.setVelocity = True
+            print("[*] START TURN {0} DEGREE".format(self.degree), flush=True)
+
+    def sendFinishFlag(self, topic, content):
+        self.flagPublisher = self.create_publisher(
+            String,
+            "/{0}/command".format(topic),
+            10
+        )
+
+        sleep(1)
+
+        self.flag = String()
+        self.flag.data = content + ":control_system"
+
+        self.flagPublisher.publish(self.flag)
+
 
 def main():
     rclpy.init()
@@ -85,6 +129,7 @@ def main():
     node = Turn()
 
     rclpy.spin(node)
+
 
 if __name__ == "__main__":
     main()
