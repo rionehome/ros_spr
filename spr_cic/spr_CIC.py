@@ -18,17 +18,12 @@ class CIC(Node):
         sleep(1)
 
         self.tasks = {
-                "1": ["sound",   "count",   None],
-                "2": ["control", "turn",    None],
-                "3": ["image",   "capture", None],
-                "4": ["sound",   "QandA",   5   ],
-                "5": ["sound", "angular", None]
+            "1": ["sound",   "count",   "None"],
+            "2": ["control", "turn",    180   ],
+            "3": ["image",   "capture", "None"],
+            "4": ["sound",   "QandA",   5     ],
+            "5": ["sound",   "angular", "None"]
         }
-
-        #self.tasks = {
-        #        "1": ["control", "find,Content:30"]       
-        #}
-
 
         self.executing = "1"
         self.did = "0"
@@ -39,46 +34,34 @@ class CIC(Node):
         for number, task in self.tasks.items():
             self.executing = number
             if self.executing != self.did:
-                if task[2] == None:
-                    self.send(task[0], task[1])
-                else:
-                    self.send_with_content(task[0], task[1], task[2])
+                self.send_with_content(task[0], task[1], task[2])
             self.did = self.executing
             break
 
     def receive(self, msg):
-        flag = int(msg.data.split(",")[0].split(":")[1])
-        print(msg.data, flush=True)
+        flag = msg.data.split(",")[0].split(":")[1]
 
-        if flag == 0:
-            print( self.tasks.pop(self.executing) , flush=True)
+        number = 0
+        tasks = None
 
-    def send(self, topic, Command):
-        self.sound_system_pub = self.create_publisher(
-                String,
-                "/"+topic+"_system/command",
-                10
-        )
+        for number, task in self.tasks.items():
+            break
 
-        sleep(1)
-
-        print("send to /{0}_system/command Command:{1} ".format(topic, Command), flush=True)
-
-        self.data.data = "Command:" + Command
-        self.sound_system_pub.publish(self.data)
+        if flag == task[1]:
+            print(self.tasks.pop(self.executing), flush=True)
 
     def send_with_content(self, topic, Command, Content):
         self.sound_system_pub = self.create_publisher(
-                String,
-                "/"+topic+"_system/command",
-                10
+            String,
+            "/"+topic+"_system/command",
+            10
         )
 
         sleep(1)
 
         print("send to /{0}_system/command Command:{1} Content:{2}".format(topic, Command, Content), flush=True)
 
-        self.data.data = "Command:" + Command + ",Content:" + str(Content)
+        self.data.data = "Command:" + Command + ",Content:" + str(Content) + ":cerebrum"
         self.sound_system_pub.publish(self.data)
 
 def main():
