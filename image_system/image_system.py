@@ -70,7 +70,7 @@ class ImageSystem(Node):
                             sex[0]
             )
             self.answor_human_number.publish(self._trans_message)
-            self.cerebrum_publisher('Return:0,Content: ')
+            self.cerebrum_publisher('Return:capture,Content: ')
 
         if 'sex' == command[0].replace('Command:', ''):
             self.message = self.detect_sex()
