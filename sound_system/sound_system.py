@@ -32,7 +32,7 @@ class SoundSystem(Node):
 
         self.angular_publisher = self.create_publisher(
             String,
-            'control/command',
+            'control_system/command',
             10
         )
 
@@ -68,7 +68,7 @@ class SoundSystem(Node):
             if self.temp_angular > 0:
                 # "Return:1,Content:angular,saying words"
                 self.turnnig_publisher(
-                    'Command:find,Content:'+str(self.temp_angular))
+                        'Command:turn,Content:'+str(self.temp_angular)+":sound")
 
         # Speak answer at answering with rurnning
         if 'finish' == command[0].replace('Command:', ''):
@@ -83,7 +83,7 @@ class SoundSystem(Node):
                 if module_QandA.QandA(content) == 1:
                     self.cerebrum_publisher('Retern:0,Content:None')
             else:
-                content = int(content)
+                content = int(content.split(":")[0])
                 if module_QandA.QandA(content) == 1:
                     self.cerebrum_publisher('Retern:QandA,Content:None')
 
