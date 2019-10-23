@@ -18,15 +18,14 @@ class SoundSystem(Node):
         self.command = None
 
         self.create_subscription(
-            String,
-            'sound_system/command',
+            String, 'sound_system/command',
             self.command_callback,
             10
         )
 
         self.senses_publisher = self.create_publisher(
             String,
-            '/cerebrum/command',
+            'cerebrum/command',
             10
         )
 
@@ -36,7 +35,6 @@ class SoundSystem(Node):
             10
         )
 
-        sleep(1)
 
     # recieve a command {Command, Content}
     def command_callback(self, msg):
@@ -47,14 +45,13 @@ class SoundSystem(Node):
         # Speak a content
         if 'speak' == command[0].replace('Command:', ''):
             if module_pico.speak(command[1].replace('Content:', '')) == 1:
-                pass
-                #self.cerebrum_publisher('Return:0,Content:None')
+                self.cerebrum_publisher('Return:speak,Content:None')
 
         # Detect hotword, "hey ducker"
         if 'detect' == command[0].replace('Command:', ''):
             print('detect',flush=True)
             if module_detect.detect() == 1:
-                self.cerebrum_publisher('Return:0,Content:None')
+                self.cerebrum_publisher('Return:detect,Content:None')
 
         # Start 10 counts
         if 'count' == command[0].replace('Command:', ''):
@@ -68,12 +65,12 @@ class SoundSystem(Node):
             if self.temp_angular > 0:
                 # "Return:1,Content:angular,saying words"
                 self.turnnig_publisher(
-                        'Command:turn,Content:'+str(self.temp_angular)+":sound")
+                    'Command:turn,Content:'+str(self.temp_angular)+":sound")
 
         # Speak answer at answering with rurnning
         if 'finish' == command[0].replace('Command:', ''):
             if module_pico.speak(self.return_list[1]) == 1:
-                self.cerebrum_publisher('Return:0,Content:None')
+                self.cerebrum_publisher('Return:finish,Content:None')
 
         # Start QandA, an act of repeating 5 times, content is times (ex; 5 times >> 5)
         content = 0
@@ -81,7 +78,7 @@ class SoundSystem(Node):
             content = command[1].replace('Content:', '')
             if "|" in str(content):
                 if module_QandA.QandA(content) == 1:
-                    self.cerebrum_publisher('Retern:0,Content:None')
+                    self.cerebrum_publisher('Retern:gender,Content:None')
             else:
                 content = int(content.split(":")[0])
                 if module_QandA.QandA(content) == 1:
