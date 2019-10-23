@@ -21,7 +21,7 @@ class Turn(Node):
 
         self.resetPose = self.create_publisher(
             Bool,
-            "/turtlebot2/commands/reset",
+            "/turtlebot2/commands/reset_pose",
             10
         )
 
@@ -42,7 +42,7 @@ class Turn(Node):
         sleep(1)
 
         self.velocity = Twist()
-        self.velocity.angular.z = 30.0
+        self.velocity.angular.z = 0.0
 
         self.setVelocity = False
         self.did = False
@@ -56,13 +56,13 @@ class Turn(Node):
         angle = 0
 
         if z > 0:
-            angle = abs(1 - arccos(w)*360 / pi) - 180
+            angle = -arccos(w)*360 / pi
         else:
-            angle = abs(360 - arccos(w)*360 / pi) - 180
+            angle =  arccos(w)*360 / pi
 
         try:
             # if reach target angular
-            if angle > self.degree:
+            if angle > int(self.degree) - 20:
 
                 self.velocity.angular.z = 0.0
 
@@ -72,7 +72,7 @@ class Turn(Node):
 
                     # send finish flag to sender
                     if self.sender == "sound_system":
-                        self.sendFinishFlag("sound", "Command:finish,Content:None")
+                        self.sendFinishFlag("sound_system", "Command:finish,Content:None")
 
                     if self.sender == "cerebrum":
                         self.sendFinishFlag("cerebrum", "Command:{0},Content:None".format(self.Command))
@@ -84,12 +84,12 @@ class Turn(Node):
             pass
 
         if self.setVelocity == True:
-            if -180 <= self.degree and self.degree < 0:
+            if -180 <= int(self.degree) and int(self.degree) < 0:
                 self.velocity.angular.z = 30.0
             else:
                 self.velocity.angular.z = -30.0
 
-        self.turn.publish(self.data)
+        self.turn.publish(self.velocity)
 
     def receiveFlag(self, msg):
         self.Command, Contents = msg.data.split(",")
@@ -98,11 +98,14 @@ class Turn(Node):
         self.degree = Contents[1]
         self.sender = Contents[2]
 
+        print(self.degree, flush=True)
+
         self.Command = self.Command.split(":")[1]
 
         if self.Command == "turn":
             reset_flag = Bool()
             reset_flag.data = True
+            self.did = False
             self.resetPose.publish(reset_flag)
 
             self.setVelocity = True
