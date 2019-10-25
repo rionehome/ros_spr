@@ -62,32 +62,52 @@ class Turn(Node):
 
         try:
             # if reach target angular
-            if angle > int(self.degree) - 20:
+            if 0 <= int(self.degree) and int(self.degree) <= 180:
+                if int(self.degree) - 15 < angle:
 
-                self.velocity.angular.z = 0.0
+                    self.velocity.angular.z = 0.0
 
-                # if not send finish flag to sender
-                if self.did == False:
-                    print("[*] STOP TURN {0} DEGREE".format(self.degree), flush=True)
+                    # if not send finish flag to sender
+                    if self.did == False:
+                        print("[*] STOP TURN {0} DEGREE".format(self.degree), flush=True)
 
-                    # send finish flag to sender
-                    if self.sender == "sound_system":
-                        self.sendFinishFlag("sound_system", "Command:finish,Content:None")
+                        # send finish flag to sender
+                        if self.sender == "sound_system":
+                            self.sendFinishFlag("sound_system", "Command:finish,Content:None")
 
-                    if self.sender == "cerebrum":
-                        self.sendFinishFlag("cerebrum", "Command:{0},Content:None".format(self.Command))
+                        if self.sender == "cerebrum":
+                            self.sendFinishFlag("cerebrum", "Command:{0},Content:None".format(self.Command))
 
-                    self.did = True
-                    self.setVelocity = False
+                        self.did = True
+                        self.setVelocity = False
+
+            if -180 <= int(self.degree) and int(self.degree) < 0:
+                if angle < int(self.degree) + 20:
+
+                    self.velocity.angular.z = 0.0
+
+                    # if not send finish flag to sender
+                    if self.did == False:
+                        print("[*] STOP TURN {0} DEGREE".format(self.degree), flush=True)
+
+                        # send finish flag to sender
+                        if self.sender == "sound_system":
+                            self.sendFinishFlag("sound_system", "Command:finish,Content:None")
+
+                        if self.sender == "cerebrum":
+                            self.sendFinishFlag("cerebrum", "Command:{0},Content:None".format(self.Command))
+
+                        self.did = True
+                        self.setVelocity = False
 
         except TypeError:
             pass
 
         if self.setVelocity == True:
             if -180 <= int(self.degree) and int(self.degree) < 0:
-                self.velocity.angular.z = 30.0
-            else:
                 self.velocity.angular.z = -30.0
+            else:
+                self.velocity.angular.z = 30.0
 
         self.turn.publish(self.velocity)
 
@@ -95,7 +115,12 @@ class Turn(Node):
         self.Command, Contents = msg.data.split(",")
 
         Contents = Contents.split(":")
-        self.degree = Contents[1]
+        self.degree = int(Contents[1])
+
+        if self.degree > 180:
+            self.degree -= 180
+            self.degree *= -1
+
         self.sender = Contents[2]
 
         print(self.degree, flush=True)
