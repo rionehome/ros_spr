@@ -22,11 +22,11 @@ class CIC(Node):
             "2": ["control", "turn",    180   ],
             "3": ["image",   "capture", "None"],
             "4": ["sound",   "QandA",   5     ],
-            "5": ["sound",   "angular", "None"]
-        }
-
-        self.tasks = {
-            "1": ["sound",   "angular", "None"]
+            "5": ["sound",   "angular", "None"],
+            "6": ["sound",   "angular", "None"],
+            "7": ["sound",   "angular", "None"],
+            "8": ["sound",   "angular", "None"],
+            "9": ["sound",   "angular", "None"],
         }
 
         self.executing = "1"
