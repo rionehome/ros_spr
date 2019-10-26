@@ -30,8 +30,7 @@ class SoundSystem(Node):
         )
 
         self.angular_publisher = self.create_publisher(
-            String,
-            'control_system/command',
+            String, 'control/command',
             10
         )
 
@@ -70,7 +69,7 @@ class SoundSystem(Node):
         # Speak answer at answering with rurnning
         if 'finish' == command[0].replace('Command:', ''):
             if module_pico.speak(self.return_list[1]) == 1:
-                self.cerebrum_publisher('Return:finish,Content:None')
+                self.cerebrum_publisher('Return:angular,Content:None')
 
         # Start QandA, an act of repeating 5 times, content is times (ex; 5 times >> 5)
         content = 0
@@ -80,7 +79,7 @@ class SoundSystem(Node):
                 if module_QandA.QandA(content) == 1:
                     self.cerebrum_publisher('Retern:gender,Content:None')
             else:
-                content = int(content.split(":")[0])
+                content = int(content)
                 if module_QandA.QandA(content) == 1:
                     self.cerebrum_publisher('Retern:QandA,Content:None')
 
