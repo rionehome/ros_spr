@@ -25,6 +25,18 @@ class Turn(Node):
             10
         )
 
+        self.flag_publisher_cerebrum = self.create_publisher(
+            String,
+            "/cerebrum/command",
+            10
+        )
+
+        self.flag_publisher_control = self.create_publisher(
+            String,
+            "/control_system/command",
+            10
+        )
+
         self.create_subscription(
             Odometry,
             "/turtlebot2/odometry",
@@ -63,7 +75,7 @@ class Turn(Node):
         try:
             # if reach target angular
             if 0 <= int(self.degree) and int(self.degree) <= 180:
-                if int(self.degree) - 15 < angle:
+                if int(self.degree) < angle:
 
                     self.velocity.angular.z = 0.0
 
@@ -72,7 +84,7 @@ class Turn(Node):
                         print("[*] STOP TURN {0} DEGREE".format(self.degree), flush=True)
 
                         # send finish flag to sender
-                        if self.sender == "sound_system":
+                        if self.sender == "sound":
                             self.sendFinishFlag("sound_system", "Command:finish,Content:None")
 
                         if self.sender == "cerebrum":
@@ -82,7 +94,7 @@ class Turn(Node):
                         self.setVelocity = False
 
             if -180 <= int(self.degree) and int(self.degree) < 0:
-                if angle < int(self.degree) + 20:
+                if angle < int(self.degree):
 
                     self.velocity.angular.z = 0.0
 
@@ -91,7 +103,7 @@ class Turn(Node):
                         print("[*] STOP TURN {0} DEGREE".format(self.degree), flush=True)
 
                         # send finish flag to sender
-                        if self.sender == "sound_system":
+                        if self.sender == "sound":
                             self.sendFinishFlag("sound_system", "Command:finish,Content:None")
 
                         if self.sender == "cerebrum":
@@ -105,9 +117,9 @@ class Turn(Node):
 
         if self.setVelocity == True:
             if -180 <= int(self.degree) and int(self.degree) < 0:
-                self.velocity.angular.z = -30.0
-            else:
                 self.velocity.angular.z = 30.0
+            else:
+                self.velocity.angular.z = -30.0
 
         self.turn.publish(self.velocity)
 
@@ -117,13 +129,14 @@ class Turn(Node):
         Contents = Contents.split(":")
         self.degree = int(Contents[1])
 
-        if self.degree > 180:
-            self.degree -= 180
+        if 0 <= self.degree and self.degree < 180:
             self.degree *= -1
+        else:
+            self.degree = self.degree - self.degree
 
         self.sender = Contents[2]
 
-        print(self.degree, flush=True)
+        print(self.sender, flush=True)
 
         self.Command = self.Command.split(":")[1]
 
@@ -137,18 +150,21 @@ class Turn(Node):
             print("[*] START TURN {0} DEGREE".format(self.degree), flush=True)
 
     def sendFinishFlag(self, topic, content):
-        self.flagPublisher = self.create_publisher(
-            String,
-            "/{0}/command".format(topic),
-            10
-        )
 
-        sleep(1)
+        if topic == "sound_system":
 
-        self.flag = String()
-        self.flag.data = content + ":control_system"
+            self.flag = String()
+            self.flag.data = content + ":control_system"
 
-        self.flagPublisher.publish(self.flag)
+            self.flag_publisher_cerebrum.publish(self.flag)
+            print("send", flush=True)
+
+        elif topic == "cerebrum":
+
+            self.flag = String()
+            self.flag.data = content + ":control_system"
+
+            self.flag_publisher_cerebrum.publish(self.flag)
 
 
 def main():
