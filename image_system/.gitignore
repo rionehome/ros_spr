@@ -1,0 +1,4 @@
+model/*
+.DS_Store
+detect_modules/detect_human/__pycache__
+detect_modules/detect_sex/__pycache__

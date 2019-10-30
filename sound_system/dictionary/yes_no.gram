@@ -1,0 +1,5 @@
+#JSGF V1.0;
+grammar yes_no;
+public <rule> = <command> | <noise>;
+<command> = yes | no | please say again;
+<noise> = and | oh | ah | why | that | one | burning | only | new | who | ether | is | it | yo | the | but | yea | okay | huh | in | hey | thing | as | seven | hi | yeah | when | how | so | cool | of | if | ha | thad | what | ugh;
