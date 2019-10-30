@@ -31,9 +31,9 @@ class Turn(Node):
             10
         )
 
-        self.flag_publisher_control = self.create_publisher(
+        self.flag_publisher_sound = self.create_publisher(
             String,
-            "/control_system/command",
+            "/sound_system/command",
             10
         )
 
@@ -74,8 +74,10 @@ class Turn(Node):
 
         try:
             # if reach target angular
-            if 0 <= int(self.degree) and int(self.degree) <= 180:
-                if int(self.degree) < angle:
+            if 0 <= int(self.degree) and int(self.degree) < 180:
+                #print("0 ~ 180 , target={0} now={1}".format(self.degree, angle), flush=True)
+
+                if int(self.degree)-5 < angle and angle < int(self.degree)+5:
 
                     self.velocity.angular.z = 0.0
 
@@ -94,7 +96,9 @@ class Turn(Node):
                         self.setVelocity = False
 
             if -180 <= int(self.degree) and int(self.degree) < 0:
-                if angle < int(self.degree):
+                #print("-180 ~ 0 , target={0} now={1}".format(self.degree, angle), flush=True)
+
+                if int(self.degree)-5 < angle and angle < int(self.degree)+5:
 
                     self.velocity.angular.z = 0.0
 
@@ -129,14 +133,14 @@ class Turn(Node):
         Contents = Contents.split(":")
         self.degree = int(Contents[1])
 
-        if 0 <= self.degree and self.degree < 180:
+        if 0 < self.degree and self.degree <= 180:
             self.degree *= -1
         else:
-            self.degree = self.degree - self.degree
+            self.degree = 360 - self.degree
 
         self.sender = Contents[2]
 
-        print(self.sender, flush=True)
+        print(self.degree, flush=True)
 
         self.Command = self.Command.split(":")[1]
 
@@ -156,8 +160,12 @@ class Turn(Node):
             self.flag = String()
             self.flag.data = content + ":control_system"
 
+            self.flag_publisher_sound.publish(self.flag)
+
+            self.flag.data = "Command:angular,Content:None"
+
             self.flag_publisher_cerebrum.publish(self.flag)
-            print("send", flush=True)
+
 
         elif topic == "cerebrum":
 
