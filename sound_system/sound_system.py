@@ -18,7 +18,8 @@ class SoundSystem(Node):
         self.command = None
 
         self.create_subscription(
-            String, 'sound_system/command',
+            String,
+            'sound_system/command',
             self.command_callback,
             10
         )
@@ -30,7 +31,8 @@ class SoundSystem(Node):
         )
 
         self.angular_publisher = self.create_publisher(
-            String, 'control/command',
+            String,
+            'control_system/command',
             10
         )
 
@@ -79,7 +81,7 @@ class SoundSystem(Node):
                 if module_QandA.QandA(content) == 1:
                     self.cerebrum_publisher('Retern:gender,Content:None')
             else:
-                content = int(content)
+                content = int(content.split(":")[0])
                 if module_QandA.QandA(content) == 1:
                     self.cerebrum_publisher('Retern:QandA,Content:None')
 
