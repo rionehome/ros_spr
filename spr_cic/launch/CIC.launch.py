@@ -34,11 +34,11 @@ def generate_launch_description():
             node_executable="image_system",
             output="screen"
         ),
-        launch_ros.actions.Node(
-            package="realsense_ros2_camera",
-            node_executable="realsense_ros2_camera",
-            output="screen"
-        ),
+        #launch_ros.actions.Node(
+        #    package="realsense_ros2_camera",
+        #    node_executable="realsense_ros2_camera",
+        #    output="screen"
+        #),
         launch_ros.actions.Node(
             package="spr_cic",
             node_executable="CIC",

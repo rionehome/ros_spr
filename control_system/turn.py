@@ -121,9 +121,9 @@ class Turn(Node):
 
         if self.setVelocity == True:
             if -180 <= int(self.degree) and int(self.degree) < 0:
-                self.velocity.angular.z = 30.0
+                self.velocity.angular.z = pi*30.0/180.0
             else:
-                self.velocity.angular.z = -30.0
+                self.velocity.angular.z = -pi*30.0/180.0
 
         self.turn.publish(self.velocity)
 

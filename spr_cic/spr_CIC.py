@@ -29,6 +29,14 @@ class CIC(Node):
             "9": ["sound",   "angular", "None"],
         }
 
+        self.tasks = {
+            "1": ["sound",   "QandA",   5     ],
+            "2": ["sound",   "angular", "None"],
+            "3": ["sound",   "angular", "None"],
+            "4": ["sound",   "angular", "None"],
+            "5": ["sound",   "angular", "None"],
+        }
+
         self.executing = "1"
         self.did = "0"
 
